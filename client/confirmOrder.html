@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Order</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      .order-container {
+        margin: 0 auto;
+        max-width: 1400px;
+      }
+      .order-detail-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .btn_2 {
+        background-color: #000;
+        color: #fff;
+      }
+      .confirm-order {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .order-detail {
+        display: flex;
+        gap: 20px;
+      }
+      .order-table {
+        width: 75%;
+      }
+      .order-info {
+        width: 25%;
+      }
+      .order-table img {
+        height: 80px;
+      }
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      .table {
+        min-width: 1000px;
+        border-collapse: collapse;
+      }
+      .product-name {
+        min-width: 200px;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      .total-price,
+      .payment-btn {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-top: 30px;
+        padding-top: 15px;
+        text-align: right;
+      }
+      .payment-btn {
+        margin-top: 10px;
+      }
+
+      h3 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      p {
+        margin-bottom: 8px;
+      }
+      .info-section {
+        display: flex;
+        flex-direction: column;
+      }
+      .info-section p span {
+        font-weight: bold;
+        color: #555;
+      }
+
+      @media (max-width: 1024px) {
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+      @media (max-width: 1100px) {
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .order-detail {
+          flex-wrap: wrap;
+        }
+        .order-table {
+          width: 100%;
+        }
+        .order-info {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="navbar">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <div class="navbar-links">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="shop.html" class="nav-link"
+                >Shop <i class="fa-solid fa-chevron-down fa-xs"></i
+              ></a>
+              <div class="mega-menu">
+                <div class="mega-menu-grid" id="megaMenu">
+                  <div class="mega-menu-column">
+                    <h3>Men</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=T-Shirts"
+                          >T-Shirts & Polos</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Jeans"
+                          >Jeans & Trousers</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Footwear"
+                          >Footwear</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Women</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Women&category=T-Shirts"
+                          >T-Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Footwear"
+                          >Footwear
+                        </a>
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Jeans"
+                          >Jeans</a
+                        >
+                      </li>
+
+                      <li>
+                        <a href="shop.html?gender=Women&category=Boots"
+                          >Boots</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Accessories</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Accessories"
+                          >Men's Accessories</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Accessories"
+                          >Women's Accessories</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-promo">
+                    <img
+                      src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      alt="Seasonal Sale"
+                    />
+                    <div class="mega-menu-promo-content">
+                      <h4>End of Season Sale</h4>
+                      <p>Up to 50% off on selected items.</p>
+                      <a href="shop.html" class="promo-btn"
+                        >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                      ></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <form action="shop.html" method="GET">
+                <input
+                  type="text"
+                  id="searchInput"
+                  name="search"
+                  placeholder="Search..."
+                />
+                <button class="btn" type="submit">Search</button>
+              </form>
+            </li>
+          </ul>
+          <div>
+            <ul class="mobile-links">
+              <li class="nav-item">
+                <button class="btn" id="loginBtn" onclick="openAuthModal()">
+                  Login
+                </button>
+              </li>
+              <li class="profile-dropdown profileDropdown" id="profileDropdown">
+                <button class="btn profile-btn" id="profileSection">A</button>
+                <div id="dropdownMenu" class="dropdown-content">
+                  <a href="profile.html">My Profile</a>
+                  <a href="orders.html">My Orders</a>
+                  <button class="btn logoutBtn" id="logoutBtn">Logout</button>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a href="cart.html" class="cart">
+                  <span id="cartCountitems">1</span>
+                  <i class="fa-solid fa-cart-plus"></i>
+                </a>
+              </li>
+
+              <li class="dark-toggle" id="dark-toggle">🌙</li>
+              <button class="menu-btn" id="menu-btn">
+                <i class="fa-solid fa-bars"></i>
+              </button>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <button class="close-btn" id="close-btn">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <input type="text" class="mobile-search" placeholder="Search..." />
+      <ul class="mobile-nav-links">
+        <li class="mobile-nav-item">
+          <a href="index.html" class="mobile-nav-link">Home</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="shop.html" class="mobile-nav-link" id="mobile-shop-link">
+            Shop
+            <i class="fa-solid fa-chevron-down fa-xs" id="shop-chevron"></i>
+          </a>
+          <div class="mobile-mega-menu" id="mobile-mega-menu">
+            <div class="mobile-mega-menu-column">
+              <h4>Men</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=T-Shirts"
+                    >T-Shirts & Polos</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Jeans"
+                    >Jeans & Trousers</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Footwear">Footwear</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h4>Women</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Women&category=T-Shirts"
+                    >T-Shirts</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Footwear"
+                    >Footwear
+                  </a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Jeans">Jeans</a>
+                </li>
+
+                <li>
+                  <a href="shop.html?gender=Women&category=Boots">Boots</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h3>Accessories</h3>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=Accessories"
+                    >Men's Accessories</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Accessories"
+                    >Women's Accessories</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="mega-menu-promo">
+              <img
+                src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Seasonal Sale"
+              />
+              <div class="mega-menu-promo-content">
+                <h4>End of Season Sale</h4>
+                <p>Up to 50% off on selected items.</p>
+                <a href="shop.html" class="promo-btn"
+                  >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">About</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">Contact</a>
+        </li>
+        <!-- <li class="mobile-nav-item">
+          <div class="dark-toggle" id="mobile-dark-toggle">🌙</div>
+        </li> -->
+      </ul>
+    </div>
+
+    <div class="menu_overlay" id="menu_overlay"></div>
+
+    <div class="order-container">
+      <div class="order-detail-container">
+        <div>
+          <button class="btn btn_2">Go Back</button>
+          <h2 class="confirm-order">Confirm Order</h2>
+        </div>
+
+        <div class="order-detail">
+          <div class="order-table">
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th class="product-name">Product Name</th>
+                    <th>Color</th>
+                    <th>Size</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody id="order-items-body"></tbody>
+              </table>
+            </div>
+            <div class="total-price">
+              Total Price: <span id="total-price"></span>
+            </div>
+            <div class="payment-btn">
+              <button class="btn btn_2" id="make-payment-button">
+                Make Payment
+              </button>
+            </div>
+          </div>
+          <div class="order-info">
+            <h3 class="order-heading">Payment Information</h3>
+            <div class="info-section">
+              <p>
+                <span>Payment Method:</span> <span id="payment-method"></span>
+              </p>
+            </div>
+
+            <h3 class="order-heading shipping-info">Shipping Information</h3>
+            <div class="info-section">
+              <div>
+                <p>
+                  <span>Full Name:</span> <span id="shipping-full-name"></span>
+                </p>
+                <p><span>Email:</span> <span id="shipping-email"></span></p>
+                <p><span>Address:</span> <span id="shipping-address"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/constant.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script type="module">
+      import { userNavbarHandler } from "/js/navbar.js";
+      userNavbarHandler();
+      const cartCountitems = document.getElementById("cartCountitems");
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length > 0) {
+        cartCountitems.textContent = cart.length;
+      }
+      renderAuthModal();
+
+      const token = JSON.parse(localStorage.getItem("token"));
+      const orderItems = JSON.parse(localStorage.getItem("orderItems"));
+      const makePaymentBtn = document.getElementById("make-payment-button");
+      const paymentMethod = document.getElementById("payment-method");
+      const shippingFullName = document.getElementById("shipping-full-name");
+      const shippingEmail = document.getElementById("shipping-email");
+      const shippingAddress = document.getElementById("shipping-address");
+      const orderItemsBody = document.getElementById("order-items-body");
+      const orderTotalPrice = document.getElementById("total-price");
+      if (!token) {
+        window.location.href = "index.html";
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        paymentMethod.textContent = orderItems.paymentMethod;
+        shippingFullName.textContent = orderItems?.shippingAddress?.fullName;
+        shippingEmail.textContent = orderItems?.shippingAddress?.email;
+        shippingAddress.textContent = `${orderItems?.shippingAddress.address}, ${orderItems?.shippingAddress.city}, ${orderItems?.shippingAddress.state}, ${orderItems?.shippingAddress.postalCode}`;
+        orderItems.cart.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+      <td><img src="${item.images[0]}" alt="${item.name}" /></td>
+                          <td>${item.name}</td>
+                          <td>${item.selectedColor}</td>
+                          <td>${item.selectedSize}</td>
+                          <td>${item.quantity}</td>
+                          <td>${item.price}</td>
+                          <td>${(item.price * item.quantity).toFixed(2)}</td>
+                  `;
+          orderItemsBody.appendChild(row);
+        });
+
+        orderTotalPrice.textContent = `$${orderItems.totalPrice.toFixed(2)}`;
+        const items = orderItems?.cart?.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+          color: item.selectedColor,
+          size: item.selectedSize,
+        }));
+
+        const shippingInfo = {
+          fullName: orderItems.shippingAddress.fullName,
+          email: orderItems.shippingAddress.email,
+          city: orderItems.shippingAddress.city,
+          postalCode: orderItems.shippingAddress.postalCode,
+          state: orderItems.shippingAddress.state,
+          address: orderItems.shippingAddress.address,
+        };
+        makePaymentBtn.addEventListener("click", async () => {
+          try {
+            const res = await fetch(`${API_URL}/get-razorpay-key`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            const razorKey = await res.json();
+            console.log("razorKey :", razorKey);
+
+            const ordersPay = await fetch(`${API_URL}/orders-pay`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                totalPrice: orderItems.totalPrice,
+              }),
+            });
+
+            const orderPayment = await ordersPay.json();
+            console.log("orderPayment :", orderPayment);
+
+            const options = {
+              key: razorKey.key,
+              amount: orderPayment?.order?.amount,
+              currency: orderPayment?.order?.currency,
+              name: "Fashion-Shop",
+              description: "This is Fashion-Shop",
+              order_id: orderPayment?.order?.id,
+              handler: async (response) => {
+                const orderDetails = {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  shippingAddress: shippingInfo,
+                  items: items,
+                  totalPrice: orderItems.totalPrice,
+                  paymentMethod: orderItems.paymentMethod,
+                };
+                console.log("orderDetails :", orderDetails);
+
+                const res = await fetch(`${API_URL}/create-order`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify(orderDetails),
+                });
+
+                const data = await res.json();
+
+                if (data?.success) {
+                  alert(data?.message);
+                  window.location.href = `success.html?orderId=${data?.order._id}`;
+                } else {
+                  alert(data?.message);
+                }
+              },
+              prefill: {
+                name: "user1",
+                email: "user1@gmail.com",
+                contact: 987363633,
+              },
+              theme: {
+                color: "#F37254",
+              },
+            };
+
+            const razorpayInstance = new window.Razorpay(options);
+            razorpayInstance.open();
+          } catch (error) {
+            console.log("ERROR:", error);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

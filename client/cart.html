@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cart</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .cart-main-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
+        margin: 20px auto;
+
+        max-width: 1200px;
+      }
+      .cart-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+      }
+      .cart-container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .cart-item {
+        background: white;
+        display: flex;
+        gap: 20px;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        align-items: center;
+      }
+
+      .cart-item img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+
+      .cart-item h4 {
+        margin: 0 0 6px;
+        font-size: 18px;
+      }
+
+      .cart-item p {
+        margin: 4px 0;
+      }
+
+      .cart-item button {
+        margin-top: 6px;
+        padding: 6px 12px;
+        border: none;
+        background: #dc3545;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .cart-item button:hover {
+        background: #c82333;
+      }
+
+      .cart-item .increase,
+      .cart-item .decrease {
+        background: #000;
+        margin: 0 4px;
+        padding: 4px 8px;
+        color: white;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .cart-item .increase:hover,
+      .cart-item .decrease:hover {
+        background: #111;
+      }
+
+      .total {
+        text-align: right;
+        margin-top: 1rem;
+      }
+      #cartTotal {
+        font-size: 20px;
+        font-weight: bold;
+        text-align: right;
+      }
+      .checkout-btns {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        justify-content: space-between;
+        margin-top: 1rem;
+      }
+
+      .checkout-btns button a {
+        color: #fff;
+      }
+
+      .checkout-btn {
+        display: block;
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background 0.2s;
+      }
+
+      .checkout-btn:hover {
+        background: #218838;
+      }
+
+      .dark-mode .cart-item {
+        background: var(--bg-color);
+        color: #f2f2f2;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      }
+
+      .dark-mode .checkout-btn {
+        background: #218838;
+      }
+
+      .dark-mode .cart-item button {
+        background: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <nav class="navbar">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <div class="navbar-links">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="shop.html" class="nav-link"
+                >Shop <i class="fa-solid fa-chevron-down fa-xs"></i
+              ></a>
+              <div class="mega-menu">
+                <div class="mega-menu-grid" id="megaMenu">
+                  <div class="mega-menu-column">
+                    <h3>Men</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=T-Shirts"
+                          >T-Shirts & Polos</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Jeans"
+                          >Jeans & Trousers</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Footwear"
+                          >Footwear</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Women</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Women&category=T-Shirts"
+                          >T-Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Footwear"
+                          >Footwear
+                        </a>
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Jeans"
+                          >Jeans</a
+                        >
+                      </li>
+
+                      <li>
+                        <a href="shop.html?gender=Women&category=Boots"
+                          >Boots</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Accessories</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Accessories"
+                          >Men's Accessories</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Accessories"
+                          >Women's Accessories</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-promo">
+                    <img
+                      src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      alt="Seasonal Sale"
+                    />
+                    <div class="mega-menu-promo-content">
+                      <h4>End of Season Sale</h4>
+                      <p>Up to 50% off on selected items.</p>
+                      <a href="shop.html" class="promo-btn"
+                        >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                      ></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <form action="shop.html" method="GET">
+                <input
+                  type="text"
+                  id="searchInput"
+                  name="search"
+                  placeholder="Search..."
+                />
+                <button class="btn" type="submit">Search</button>
+              </form>
+            </li>
+          </ul>
+          <div>
+            <ul class="mobile-links">
+              <li class="nav-item">
+                <button class="btn" id="loginBtn" onclick="openAuthModal()">
+                  Login
+                </button>
+              </li>
+              <li class="profile-dropdown profileDropdown" id="profileDropdown">
+                <button class="btn profile-btn" id="profileSection">A</button>
+                <div id="dropdownMenu" class="dropdown-content">
+                  <a href="profile.html">My Profile</a>
+                  <a href="orders.html">My Orders</a>
+                  <button class="btn logoutBtn" id="logoutBtn">Logout</button>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a href="cart.html" class="cart">
+                  <span id="cartCountitems">1</span>
+                  <i class="fa-solid fa-cart-plus"></i>
+                </a>
+              </li>
+
+              <li class="dark-toggle" id="dark-toggle">🌙</li>
+              <button class="menu-btn" id="menu-btn">
+                <i class="fa-solid fa-bars"></i>
+              </button>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <button class="close-btn" id="close-btn">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <input type="text" class="mobile-search" placeholder="Search..." />
+      <ul class="mobile-nav-links">
+        <li class="mobile-nav-item">
+          <a href="index.html" class="mobile-nav-link">Home</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="shop.html" class="mobile-nav-link" id="mobile-shop-link">
+            Shop
+            <i class="fa-solid fa-chevron-down fa-xs" id="shop-chevron"></i>
+          </a>
+          <div class="mobile-mega-menu" id="mobile-mega-menu">
+            <div class="mobile-mega-menu-column">
+              <h4>Men</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=T-Shirts"
+                    >T-Shirts & Polos</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Jeans"
+                    >Jeans & Trousers</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Footwear">Footwear</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h4>Women</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Women&category=T-Shirts"
+                    >T-Shirts</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Footwear"
+                    >Footwear
+                  </a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Jeans">Jeans</a>
+                </li>
+
+                <li>
+                  <a href="shop.html?gender=Women&category=Boots">Boots</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h3>Accessories</h3>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=Accessories"
+                    >Men's Accessories</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Accessories"
+                    >Women's Accessories</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="mega-menu-promo">
+              <img
+                src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Seasonal Sale"
+              />
+              <div class="mega-menu-promo-content">
+                <h4>End of Season Sale</h4>
+                <p>Up to 50% off on selected items.</p>
+                <a href="shop.html" class="promo-btn"
+                  >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">About</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">Contact</a>
+        </li>
+        <!-- <li class="mobile-nav-item">
+          <div class="dark-toggle" id="mobile-dark-toggle">🌙</div>
+        </li> -->
+      </ul>
+    </div>
+
+    <div class="menu_overlay" id="menu_overlay"></div>
+
+    <main class="cart-main-container">
+      <div class="cart-header">
+        <h1>Your Cart</h1>
+      </div>
+      <div id="cartContainer" class="cart-container"></div>
+      <div class="total">
+        <h3 id="cartTotal"></h3>
+      </div>
+      <div class="checkout-btns">
+        <button class="checkout-btn">
+          <a href="shop.html">← Continue Shopping</a>
+        </button>
+        <button class="checkout-btn">
+          <a href="checkout.html">Checkout</a>
+        </button>
+      </div>
+    </main>
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>ShopVerse</h4>
+          <p>
+            Your one-stop destination for the latest trends in fashion and
+            accessories. Quality and style delivered to your doorstep.
+          </p>
+          <div class="social-icons">
+            <a href="#" aria-label="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" aria-label="Pinterest"
+              ><i class="fab fa-pinterest-p"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#">Men's Collection</a></li>
+            <li><a href="#">Women's Fashion</a></li>
+            <li><a href="#">Accessories</a></li>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Sale & Offers</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Shipping & Returns</a></li>
+            <li><a href="#">Track Your Order</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Stay Updated</h4>
+          <p>Subscribe to our newsletter for the latest updates and offers.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required />
+            <button type="submit">Go</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 ShopVerse. All Rights Reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-paypal"></i>
+          <i class="fab fa-cc-amex"></i>
+        </div>
+      </div>
+    </footer>
+    <script src="products.js"></script>
+    <!-- <script src="navbar.js"></script> -->
+    <script src="/js/modal.js"></script>
+    <script src="/js/constant.js"></script>
+    <script type="module">
+      import { userNavbarHandler } from "/js/navbar.js";
+      userNavbarHandler();
+      renderAuthModal();
+      const cartContainer = document.getElementById("cartContainer");
+      const cartTotal = document.getElementById("cartTotal");
+      const cartCount = document.getElementById("cart-count");
+      const cartCountitems = document.getElementById("cartCountitems");
+
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cart.length > 0) {
+        cartCountitems.textContent = cart.length;
+      }
+      const saveCart = (cart) =>
+        localStorage.setItem("cart", JSON.stringify(cart));
+      const updateCartCount = () => {
+        if (cartCount)
+          cartCount.textContent = cart.reduce(
+            (sum, item) => sum + item.quantity,
+            0
+          );
+      };
+
+      const renderCart = () => {
+        if (!cartContainer) return;
+
+        cartContainer.innerHTML = "";
+        let total = 0;
+
+        if (cart.length === 0) {
+          cartContainer.innerHTML = `<p>Your cart is empty.</p>`;
+          cartTotal.textContent = "";
+          return;
+        }
+
+        cart.forEach((item, index) => {
+          total += item.price * item.quantity;
+          const div = document.createElement("div");
+          div.className = "cart-item";
+          div.innerHTML = `
+            <img src="${item.images[0]}" width="80">
+            <div>
+              <h4>${item.name}</h4>
+              <p>Price: $${item.price}</p>
+              <p>Color: ${item.selectedColor}</p>
+              <p>Size: ${item.selectedSize}</p>
+              <p>Quantity:
+                <button class="decrease">−</button>
+                ${item.quantity}
+                <button class="increase">+</button>
+              </p>
+              <button class="remove">Remove</button>
+            </div>
+          `;
+          div.querySelector(".increase").addEventListener("click", () => {
+            item.quantity += 1;
+            saveCart(cart);
+            renderCart();
+            updateCartCount();
+          });
+          div.querySelector(".decrease").addEventListener("click", () => {
+            if (item.quantity > 1) {
+              item.quantity -= 1;
+              saveCart(cart);
+              renderCart();
+              updateCartCount();
+            }
+          });
+          div.querySelector(".remove").addEventListener("click", () => {
+            cart.splice(index, 1);
+            saveCart(cart);
+            renderCart();
+            updateCartCount();
+          });
+          cartContainer.appendChild(div);
+        });
+
+        cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+      };
+
+      if (cartContainer) {
+        renderCart();
+      }
+      updateCartCount();
+    </script>
+  </body>
+</html>
