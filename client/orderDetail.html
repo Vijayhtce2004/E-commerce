@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Detail</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .orderDetailContainer {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .btn_2 {
+        background-color: #000;
+        color: #fff;
+      }
+      .btn_2:hover {
+        background-color: #111;
+        color: #fff;
+      }
+      .btn_2 a {
+        color: #fff;
+      }
+      .orderDetailContainer img {
+        height: 80px;
+      }
+      h2 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      h3 {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-top: 30px;
+        margin-bottom: 15px;
+      }
+      p {
+        margin-bottom: 8px;
+      }
+      p span {
+        font-weight: bold;
+        color: #555;
+      }
+      .order-status {
+        text-transform: capitalize;
+        background-color: red;
+        padding: 5px 8px;
+        font-size: 12px;
+        border-radius: 20px;
+        color: #fff;
+        font-weight: bold;
+      }
+      .order-status.green {
+        background-color: green;
+      }
+      .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      table {
+        max-width: 1000px;
+        border-collapse: collapse;
+        margin-top: 20px;
+        min-width: 1000px;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      @media (max-width: 1024px) {
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="orderDetailContainer">
+      <button class="btn btn_2"><a href="orders.html">Go Back</a></button>
+      <h2><span>Order ID:</span> <span id="orderId"></span></h2>
+
+      <div class="info-section">
+        <p><span>User ID:</span> <span id="userId"></span></p>
+        <p>
+          <span>Order Status:</span>
+          <span id="orderStatus" class="order-status"></span>
+        </p>
+      </div>
+
+      <h3>Payment Information</h3>
+      <div class="info-section">
+        <p><span>Payment Method:</span> <span id="paymentMethod"></span></p>
+        <p><span>Payment Id:</span> <span id="paymentId"></span></p>
+        <p>
+          <span>Payment Status:</span>
+          <span id="payment-status">Not Paid</span>
+        </p>
+        <p>
+          <span>Paid Date:</span>
+          <span id="paidDate">12/01/2025</span>
+        </p>
+        <p>
+          <span>Total Paid:</span>
+          <span id="totalPaid">$677</span>
+        </p>
+      </div>
+      <h3>Shipping Information</h3>
+      <div class="info-section">
+        <p><span>Full Name:</span> <span id="shipping-fullName"></span></p>
+        <p><span>Email:</span> <span id="shipping-email"></span></p>
+        <p><span>Address:</span> <span id="shipping-address"></span></p>
+      </div>
+
+      <h3>Ordered Items</h3>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Color</th>
+              <th>Size</th>
+              <th>Discount</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="order-items-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="/js/constant.js"></script>
+    <script type="module">
+      import { fetchOrderById } from "/js/order.js";
+      const getQueryParam = (param) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+      };
+
+      const orderId = getQueryParam("orderId");
+      const orderIds = document.getElementById("orderId");
+      const userId = document.getElementById("userId");
+      const orderStatus = document.getElementById("orderStatus");
+      const paymentMethod = document.getElementById("paymentMethod");
+      const paymentStatus = document.getElementById("payment-status");
+      const paidDate = document.getElementById("paidDate");
+      const paymentId = document.getElementById("paymentId");
+      const totalPaid = document.getElementById("totalPaid");
+      const shippingFullName = document.getElementById("shipping-fullName");
+      const shippingEmail = document.getElementById("shipping-email");
+      const shippingAddress = document.getElementById("shipping-address");
+      const orderItemsBody = document.getElementById("order-items-body");
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        const orderdata = await fetchOrderById(orderId);
+        console.log("orderdata :", orderdata);
+        orderIds.textContent = orderdata?._id;
+        userId.textContent = orderdata?.userId;
+        orderStatus.textContent = orderdata?.status;
+        paymentMethod.textContent = orderdata?.paymentMethod;
+        paymentStatus.textContent = orderdata?.paymentStatus;
+        paymentId.textContent = orderdata?.paymentId;
+        totalPaid.textContent = `$${Number(orderdata?.totalPrice).toFixed(2)}`;
+        paidDate.textContent = orderdata?.paitAt?.split("T")[0];
+        shippingFullName.textContent = orderdata.shippingAddress.fullName;
+        shippingEmail.textContent = orderdata.shippingAddress.email;
+        shippingAddress.textContent = `${orderdata.shippingAddress.address}, ${orderdata.shippingAddress.city}, ${orderdata.shippingAddress.state}, ${orderdata.shippingAddress.postalCode}`;
+
+        if (orderdata.status === "confirmed") {
+          orderStatus.classList.add("green");
+        }
+        orderdata.items.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><img src="${item.productId.images[0]}" alt="${
+            item.productId.name
+          }"></td>
+            <td>${item.productId.name}</td>
+            <td>${item.quantity}</td>
+            <td>${item.color}</td>
+            <td>${item.size}</td>
+            <td>${item.productId.discount}%</td>
+            <td>$${item.productId.price.toFixed(2)}</td>
+            `;
+          orderItemsBody.appendChild(row);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      .page-container {
+        display: flex;
+        gap: 10px;
+        max-width: 1400px;
+        margin: 0px auto;
+      }
+      .sidebar {
+        max-height: 100vh;
+        overflow-y: auto;
+        background: var(--bg-color);
+        position: sticky;
+        top: 90px;
+        left: 0;
+        padding: 20px;
+        padding-bottom: 100px;
+        transform: translateX(0);
+        flex-shrink: 0;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        width: 20%;
+      }
+      .sidebar.show {
+        transform: translateX(0);
+        background: var(--bg-color);
+      }
+
+      .sidebar h2,
+      .sidebar h3 {
+        margin-bottom: 10px;
+      }
+      .close-sidebar-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        color: var(--text-color);
+        background-color: var(--bg-color);
+        padding: 8px 10px;
+        background-color: #000;
+        display: none;
+        border-radius: 0;
+      }
+
+      /* dark mode sidebar  */
+      body.dark .sidebar {
+        background: #1e1e1e;
+        color: #fff;
+        border-right: 1px solid #333;
+      }
+      body.dark .filter-btn {
+        background: #555;
+      }
+      .sidebar::-webkit-scrollbar {
+        display: none;
+      }
+
+      .open-btn {
+        padding: 10px 20px;
+        background: #333;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: none;
+      }
+      .filter-group {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
+      }
+      .filter-group:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+      }
+      .filter-group label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .filter-group input[type="checkbox"] {
+        margin-right: 8px;
+      }
+
+      .color-swatch-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .color-swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #ddd;
+        transition: transform 0.2s;
+        position: relative;
+      }
+
+      .color-swatch.selected {
+        border-color: #71aae7;
+        transform: scale(1.1);
+      }
+      .color-swatch.selected::after {
+        content: "✔";
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px;
+        text-shadow: 0 0 2px black;
+      }
+      .price-range {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        color: #5a98da;
+      }
+      .price-range input[type="range"] {
+        flex-grow: 1;
+      }
+      .reset-button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        background-color: #000;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .reset-button:hover {
+        background-color: #5a6268;
+      }
+
+      .sidebar_overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+      }
+      .sidebar_overlay.active {
+        opacity: 1;
+        visibility: visible;
+        z-index: 1000;
+      }
+
+      /* products container */
+      .product-container {
+        flex-grow: 1;
+      }
+      .product-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        gap: 10px;
+        padding: 15px;
+        background-color: var(--bg-color);
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      #productCount {
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .filterSort {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sort-container select {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+      }
+
+      /* product card  */
+      .product-container .product-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        /* padding: 20px; */
+      }
+      .product-container .product-grid .product-card {
+        background: var(--bg-color);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        display: flex;
+        flex-direction: column;
+      }
+      body.dark .product-card {
+        background: #1e1e1e;
+        border: 1px solid #444;
+      }
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      }
+
+      .product-image-container {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+      }
+      .product-image {
+        height: 200px;
+        background-color: transparent;
+        padding: 5px;
+      }
+      .favorite-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(4px);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        color: #374151;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .favorite-btn:hover {
+        color: #ef4444;
+      }
+      .favorite-btn i {
+        font-size: 20px;
+      }
+      /* product card detail  */
+      .product-details {
+        padding: 10px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .product-info {
+        flex-grow: 1;
+      }
+      .meta-info,
+      .rating,
+      .color-selector,
+      .size-selector,
+      .product-actions {
+        display: flex;
+        align-items: center;
+      }
+      .meta-info {
+        justify-content: space-between;
+      }
+      .brand {
+        color: var(--text-color);
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+      .rating {
+        gap: 4px;
+      }
+      .rating-score {
+        font-weight: 700;
+        color: var(--text-color);
+      }
+      .rating-reviews {
+        font-size: 14px;
+        color: #9ca3af;
+      }
+      .product-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin: 5px 0;
+        cursor: pointer;
+        transition: text-decoration 0.3s ease;
+      }
+      .product-name:hover {
+        text-decoration: underline;
+        color: var(--text-color);
+      }
+
+      .colors {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 10px 0;
+      }
+      .colors .color-label {
+        margin: 0;
+      }
+      .options-label {
+        color: var(--text-color);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      .color-selector {
+        gap: 12px;
+      }
+      .color-option {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 1px solid #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      .color-option.selected {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px #1a1a1a;
+      }
+      .size-options-container {
+        margin: 10px 0;
+      }
+      .size-selector {
+        gap: 8px;
+      }
+      .size-option {
+        flex: 1;
+        padding: 6px 10px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        color: var(--text-color);
+        background-color: transparent;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+      .size-option:hover {
+        background-color: var(--bg-color);
+      }
+      .size-option.selected {
+        background-color: #1a1a1a;
+        color: #ffffff;
+        font-weight: 600;
+      }
+      .product-actions {
+        justify-content: space-between;
+      }
+      .price {
+        font-size: 18px;
+        font-weight: 800;
+        color: var(--text-color);
+      }
+      .add-to-cart-btn {
+        background-color: #111827;
+        color: #ffffff;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .add-to-cart-btn:hover {
+        background-color: #374151;
+      }
+
+      /* Responsive  */
+      @media (max-width: 1100px) {
+        .filter-btn {
+          display: block;
+        }
+        .product-container .product-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        #openSidebar,
+        #closeSidebar {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          width: 50%;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          padding-bottom: 50px;
+          transform: translateX(-100%);
+          height: 100%;
+          background: #fff;
+          z-index: 1400;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .product-container .product-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 468px) {
+        .product-container .product-grid {
+          grid-template-columns: repeat(1, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- header  -->
+    <header class="main-header">
+      <nav class="navbar">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <div class="navbar-links">
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+              <a href="shop.html" class="nav-link"
+                >Shop <i class="fa-solid fa-chevron-down fa-xs"></i
+              ></a>
+              <div class="mega-menu">
+                <div class="mega-menu-grid" id="megaMenu">
+                  <div class="mega-menu-column">
+                    <h3>Men</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=T-Shirts"
+                          >T-Shirts & Polos</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Jeans"
+                          >Jeans & Trousers</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Footwear"
+                          >Footwear</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Women</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Women&category=T-Shirts"
+                          >T-Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Shirts"
+                          >Shirts</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Footwear"
+                          >Footwear
+                        </a>
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Jeans"
+                          >Jeans</a
+                        >
+                      </li>
+
+                      <li>
+                        <a href="shop.html?gender=Women&category=Boots"
+                          >Boots</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-column">
+                    <h3>Accessories</h3>
+                    <ul>
+                      <li>
+                        <a href="shop.html?gender=Men&category=Accessories"
+                          >Men's Accessories</a
+                        >
+                      </li>
+                      <li>
+                        <a href="shop.html?gender=Women&category=Accessories"
+                          >Women's Accessories</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="mega-menu-promo">
+                    <img
+                      src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      alt="Seasonal Sale"
+                    />
+                    <div class="mega-menu-promo-content">
+                      <h4>End of Season Sale</h4>
+                      <p>Up to 50% off on selected items.</p>
+                      <a href="shop.html" class="promo-btn"
+                        >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                      ></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a href="about.html" class="nav-link">About</a>
+            </li>
+            <li class="nav-item">
+              <a href="#" class="nav-link">Contact</a>
+            </li>
+
+            <li class="nav-item">
+              <form action="shop.html" method="GET">
+                <input
+                  type="text"
+                  id="searchInput"
+                  name="search"
+                  placeholder="Search..."
+                />
+                <button class="btn" type="submit">Search</button>
+              </form>
+            </li>
+          </ul>
+          <div>
+            <ul class="mobile-links">
+              <li class="nav-item">
+                <button class="btn" id="loginBtn" onclick="openAuthModal()">
+                  Login
+                </button>
+              </li>
+              <li class="profile-dropdown profileDropdown" id="profileDropdown">
+                <button class="btn profile-btn" id="profileSection">A</button>
+                <div id="dropdownMenu" class="dropdown-content">
+                  <a href="profile.html">My Profile</a>
+                  <a href="orders.html">My Orders</a>
+                  <button class="btn logoutBtn" id="logoutBtn">Logout</button>
+                </div>
+              </li>
+              <li class="nav-item">
+                <a href="cart.html" class="cart">
+                  <span id="cartCountitems">1</span>
+                  <i class="fa-solid fa-cart-plus"></i>
+                </a>
+              </li>
+
+              <li class="dark-toggle" id="dark-toggle">🌙</li>
+              <button class="menu-btn" id="menu-btn">
+                <i class="fa-solid fa-bars"></i>
+              </button>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="nav-logo">FashionShop</a>
+        <button class="close-btn" id="close-btn">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+      <input type="text" class="mobile-search" placeholder="Search..." />
+      <ul class="mobile-nav-links">
+        <li class="mobile-nav-item">
+          <a href="index.html" class="mobile-nav-link">Home</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="shop.html" class="mobile-nav-link" id="mobile-shop-link">
+            Shop
+            <i class="fa-solid fa-chevron-down fa-xs" id="shop-chevron"></i>
+          </a>
+          <div class="mobile-mega-menu" id="mobile-mega-menu">
+            <div class="mobile-mega-menu-column">
+              <h4>Men</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=T-Shirts"
+                    >T-Shirts & Polos</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Jeans"
+                    >Jeans & Trousers</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Men&category=Footwear">Footwear</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h4>Women</h4>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Women&category=T-Shirts"
+                    >T-Shirts</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Shirts">Shirts</a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Footwear"
+                    >Footwear
+                  </a>
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Jeans">Jeans</a>
+                </li>
+
+                <li>
+                  <a href="shop.html?gender=Women&category=Boots">Boots</a>
+                </li>
+              </ul>
+            </div>
+            <div class="mobile-mega-menu-column">
+              <h3>Accessories</h3>
+              <ul>
+                <li>
+                  <a href="shop.html?gender=Men&category=Accessories"
+                    >Men's Accessories</a
+                  >
+                </li>
+                <li>
+                  <a href="shop.html?gender=Women&category=Accessories"
+                    >Women's Accessories</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="mega-menu-promo">
+              <img
+                src="https://images.pexels.com/photos/1040424/pexels-photo-1040424.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Seasonal Sale"
+              />
+              <div class="mega-menu-promo-content">
+                <h4>End of Season Sale</h4>
+                <p>Up to 50% off on selected items.</p>
+                <a href="shop.html" class="promo-btn"
+                  >Shop Now <i class="fa-solid fa-arrow-right fa-xs"></i
+                ></a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">About</a>
+        </li>
+        <li class="mobile-nav-item">
+          <a href="#" class="mobile-nav-link">Contact</a>
+        </li>
+        <!-- <li class="mobile-nav-item">
+          <div class="dark-toggle" id="mobile-dark-toggle">🌙</div>
+        </li> -->
+      </ul>
+    </div>
+
+    <div class="menu_overlay" id="menu_overlay"></div>
+    <!-- products  -->
+    <div class="page-container container">
+      <aside class="sidebar" id="sidebar">
+        <button id="closeSidebar" class="filter-btn close-sidebar-btn btn">
+          X
+        </button>
+        <h2>Filters</h2>
+        <div class="filter-group">
+          <div id="genderFilters"></div>
+        </div>
+
+        <div class="filter-group">
+          <h3>Category</h3>
+          <div id="categoryFilters"></div>
+        </div>
+
+        <div class="filter-group">
+          <h3>Brand</h3>
+          <div id="brandFilters"></div>
+        </div>
+
+        <div class="filter-group">
+          <h3>Color</h3>
+          <div id="colorFilters" class="color-swatch-container"></div>
+        </div>
+
+        <div class="filter-group">
+          <h3>Price Range</h3>
+          <div class="price-range">
+            <input
+              type="range"
+              id="priceRange"
+              min="0"
+              max="200"
+              step="1"
+              value="200"
+            />
+            <span id="priceValue">$200</span>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <button id="resetFiltersBtn" class="reset-button">
+            Reset All Filters
+          </button>
+        </div>
+      </aside>
+
+      <main class="product-container">
+        <header class="product-header">
+          <span id="productCount"></span>
+          <div class="filterSort">
+            <button id="openSidebar" class="filter-btn open-btn">
+              <span>☰ </span>Filters
+            </button>
+            <div class="sort-container">
+              <label for="sortOptions">Sort by:</label>
+              <select id="sortOptions">
+                <option value="default">Default</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A to Z</option>
+                <option value="name-desc">Name: Z to A</option>
+              </select>
+            </div>
+          </div>
+        </header>
+        <div id="productGrid" class="product-grid"></div>
+      </main>
+    </div>
+    <div class="sidebar_overlay" id="sidebar_overlay"></div>
+
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>FashionShop</h4>
+          <p>
+            Your one-stop destination for the latest trends in fashion and
+            accessories. Quality and style delivered to your doorstep.
+          </p>
+          <div class="social-icons">
+            <a href="#" aria-label="Facebook"
+              ><i class="fab fa-facebook-f"></i
+            ></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a href="#" aria-label="Pinterest"
+              ><i class="fab fa-pinterest-p"></i
+            ></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="shop.html?gender=Men">Men's Collection</a></li>
+            <li><a href="shop.html?gender=Women">Women's Fashion</a></li>
+            <li><a href="shop.html?category=Accessories">Accessories</a></li>
+            <li><a href="#">New Arrivals</a></li>
+            <li><a href="#">Sale & Offers</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Shipping & Returns</a></li>
+            <li><a href="#">Track Your Order</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Stay Updated</h4>
+          <p>Subscribe to our newsletter for the latest updates and offers.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required />
+            <button type="submit">Go</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 FashionShop. All Rights Reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-paypal"></i>
+          <i class="fab fa-cc-amex"></i>
+        </div>
+      </div>
+    </footer>
+    <!-- <script src="/js/navbar.js"></script> -->
+    <!-- <script src="products.js"></script> -->
+    <script src="/js/constant.js"></script>
+    <script src="/js/addToCart.js"></script>
+    <script src="/js/modal.js"></script>
+
+    <script type="module">
+      import { userNavbarHandler } from "/js/navbar.js";
+      import { fetchProducts } from "/js/products.js";
+      userNavbarHandler();
+      renderAuthModal();
+      // sidebar
+      const openSidebar = document.getElementById("openSidebar");
+      const closeSidebar = document.getElementById("closeSidebar");
+      const sidebar = document.getElementById("sidebar");
+      const sidebar_overlay = document.getElementById("sidebar_overlay");
+      const cartCountitems = document.getElementById("cartCountitems");
+
+      const cartLength = JSON.parse(localStorage.getItem("cart")) || [];
+      if (cartLength.length > 0) {
+        cartCountitems.textContent = cartLength.length;
+      }
+
+      openSidebar.addEventListener("click", () => {
+        sidebar.classList.add("show");
+        sidebar_overlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+      });
+      closeSidebar.addEventListener("click", () => {
+        sidebar.classList.remove("show");
+        sidebar_overlay.classList.remove("active");
+        document.body.style.overflow = "";
+      });
+
+      sidebar_overlay.addEventListener("click", () => {
+        sidebar.classList.remove("show");
+        sidebar_overlay.classList.remove("active");
+        document.body.style.overflow = "";
+      });
+
+      // products
+      document.addEventListener("DOMContentLoaded", () => {
+        const productGrid = document.getElementById("productGrid");
+        const productCount = document.getElementById("productCount");
+        const searchInput = document.getElementById("searchInput");
+        const categoryFilters = document.getElementById("categoryFilters");
+        const brandFilters = document.getElementById("brandFilters");
+        const genderFilters = document.getElementById("genderFilters");
+        const colorFilters = document.getElementById("colorFilters");
+        const priceRange = document.getElementById("priceRange");
+        const priceValue = document.getElementById("priceValue");
+        const sortOptions = document.getElementById("sortOptions");
+        const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+
+        let allProducts = [];
+
+        const filters = {
+          searchQuery: "",
+          category: new Set(),
+          brand: new Set(),
+          gender: new Set(),
+          color: new Set(),
+          gender: new Set(),
+          maxPrice: 200,
+          sort: "default",
+        };
+
+        const initialize = async () => {
+          allProducts = await fetchProducts();
+          setupFilters();
+          readFiltersFromURL();
+          updateUIFromFilters();
+          addEventListeners();
+          applyFiltersAndSort();
+        };
+
+        const setupFilters = () => {
+          const categories = [
+            ...new Set(allProducts.flatMap((p) => p.category)),
+          ];
+
+          const genders = [...new Set(allProducts.flatMap((p) => p.gender))];
+          const brands = [...new Set(allProducts.flatMap((p) => p.brand))];
+          const colors = [...new Set(allProducts.flatMap((p) => p.colors))];
+
+          createCheckboxFilters(genderFilters, genders, "gender");
+          createCheckboxFilters(categoryFilters, categories, "category");
+          createCheckboxFilters(brandFilters, brands, "brand");
+          createCheckboxFilters(genderFilters, genders, "gender");
+          createColorSwatches(colorFilters, colors, "color");
+
+          const maxPrice = Math.ceil(
+            Math.max(...allProducts.map((p) => p.price))
+          );
+          priceRange.max = maxPrice;
+        };
+
+        const createCheckboxFilters = (container, items, type) => {
+          container.innerHTML = ""; // Clear previous
+          items.forEach((item) => {
+            const label = document.createElement("label");
+            label.innerHTML = `<input type="checkbox" data-filter-type="${type}" value="${item}"> ${item}`;
+            container.appendChild(label);
+          });
+        };
+
+        const createColorSwatches = (container, colors, type) => {
+          container.innerHTML = "";
+          colors.forEach((color) => {
+            const swatch = document.createElement("div");
+            swatch.className = "color-swatch";
+            swatch.style.backgroundColor = color;
+            swatch.dataset.filterType = type;
+            swatch.dataset.value = color;
+            container.appendChild(swatch);
+          });
+        };
+        // create color for product
+        const createColorOptions = (colors) => {
+          if (!colors || colors.length === 0) return "";
+          return colors
+            .map(
+              (color, index) => `
+                          <button
+                            class="color-option ${
+                              index === 0 ? "selected" : ""
+                            }"
+                            style="background-color: ${color};"
+                            data-color="${color}"
+                            aria-label="Select color ${color}"></button>
+                        `
+            )
+            .join("");
+        };
+
+        // create size for product
+        const createSizeOptions = (sizes) => {
+          if (!sizes || sizes.length === 0) return "";
+          const sizeButtons = sizes
+            .map(
+              (size, index) => `
+                            <button class="size-option ${
+                              index === 0 ? "selected" : ""
+                            }">
+                                ${size}
+                            </button>
+                        `
+            )
+            .join("");
+
+          return `
+                            <div class="size-options-container">
+
+                                <div class="size-selector">
+                                    ${sizeButtons}
+                                </div>
+                            </div>
+                        `;
+        };
+
+        // --- Render Products  ---
+        const renderProducts = (productsToRender) => {
+          productGrid.innerHTML = "";
+          productsToRender.forEach((product) => {
+            const productCard = document.createElement("div");
+            productCard.className = "product-card";
+            productCard.innerHTML = `
+                      <div class="product-image-container">
+                                <img
+                                    class="product-image"
+                                    src="${product.images[0]}"
+                                    alt="${product.name}"
+                                    onerror="this.onerror=null;this.src='https://placehold.co/600x800/fecaca/991b1b?text=Image+Not+Found';"
+                                >
+                                <button class="favorite-btn" aria-label="Add to favorites">
+                                    <i class="fa-regular fa-heart"></i>
+                                </button>
+                            </div>
+                            <div class="product-details">
+                                <div class="product-info">
+                                    <div class="meta-info">
+                                        <p class="brand">${product.brand}</p>
+                                        <div class="rating">
+                                            <i class="fa-solid fa-star"></i>
+                                            <span class="rating-score">${
+                                              product.avgRating
+                                            }</span>
+                                            <span class="rating-reviews">(${
+                                              product.numReviews
+                                            })</span>
+                                        </div>
+                                    </div>
+                                    <h4 class="product-name">
+                                      <a href="product.html?slug=${
+                                        product.slug
+                                      }">${product.name.slice(
+              0,
+              30
+            )}...<a/></h4>
+
+                                    <div class="colors">
+                                        <p class="option-label">Colors : </p>
+                                        <div class="color-selector ">
+                                            ${createColorOptions(
+                                              product.colors
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    ${createSizeOptions(product.sizes)}
+                                </div>
+
+                                <div class="product-actions">
+                                    <p class="price">$${product.price}</p>
+                                    <button class="add-to-cart-btn">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+            productGrid.appendChild(productCard);
+            // handle color selection
+            const colorButtons = productCard.querySelectorAll(".color-option");
+            colorButtons.forEach((btn) => {
+              btn.addEventListener("click", () => {
+                colorButtons.forEach((b) => b.classList.remove("selected"));
+                btn.classList.add("selected");
+              });
+            });
+
+            // handle size selection
+            const sizeButtons = productCard.querySelectorAll(".size-option");
+            sizeButtons.forEach((btn) => {
+              btn.addEventListener("click", () => {
+                sizeButtons.forEach((b) => b.classList.remove("selected"));
+                btn.classList.add("selected");
+              });
+            });
+            const addToCartBtn = productCard.querySelector(".add-to-cart-btn");
+            addToCartBtn.addEventListener("click", () => {
+              const selectedColorBtn = productCard.querySelector(
+                ".color-option.selected"
+              );
+              const selectedSizeBtn = productCard.querySelector(
+                ".size-option.selected"
+              );
+
+              if (!selectedColorBtn || !selectedSizeBtn) {
+                alert("Please select color and size before adding to cart.");
+                return;
+              }
+
+              const color = selectedColorBtn.dataset.color;
+              const size = selectedSizeBtn.textContent.trim();
+
+              addToCart({
+                ...product,
+                selectedColor: color,
+                selectedSize: size,
+              });
+            });
+          });
+          productCount.textContent = `${productsToRender.length} Product(s) found`;
+          //   productGrid.addEventListener("click", (e) => {
+          //     const button = e.target.closest("button");
+          //     if (!button) return;
+
+          //     // Helper function to handle selection
+          //     const handleSelection = (selector, selectedClass) => {
+          //       const optionsContainer = button.closest(selector);
+          //       if (optionsContainer) {
+          //         const options = optionsContainer.querySelectorAll(
+          //           `.${button.classList[0]}`
+          //         );
+          //         options.forEach((opt) => opt.classList.remove(selectedClass));
+          //         button.classList.add(selectedClass);
+          //       }
+          //     };
+
+          //     // Handle color and size option selection
+          //     if (button.classList.contains("color-option")) {
+          //       handleSelection(".color-selector", "selected");
+          //     } else if (button.classList.contains("size-option")) {
+          //       handleSelection(".size-selector", "selected");
+          //     }
+          //   });
+        };
+        // --- Filtering Logic ---
+
+        const applyFiltersAndSort = () => {
+          let filteredProducts = [...allProducts];
+
+          const urlParams = new URLSearchParams(window.location.search);
+          const searchQueryFromURL = urlParams.get("search");
+
+          if (searchQueryFromURL) {
+            filters.searchQuery = searchQueryFromURL.toLowerCase();
+            filteredProducts = filteredProducts.filter((p) =>
+              p.name.toLowerCase().includes(filters.searchQuery)
+            );
+          }
+
+          if (filters.gender.size > 0) {
+            filteredProducts = filteredProducts.filter((p) =>
+              filters.gender.has(p.gender)
+            );
+          }
+          if (filters.category.size > 0) {
+            filteredProducts = filteredProducts.filter((p) =>
+              filters.category.has(p.category)
+            );
+          }
+          if (filters.brand.size > 0) {
+            filteredProducts = filteredProducts.filter((p) =>
+              filters.brand.has(p.brand)
+            );
+          }
+          if (filters.gender.size > 0) {
+            filteredProducts = filteredProducts.filter((p) =>
+              filters.gender.has(p.gender)
+            );
+          }
+          if (filters.color.size > 0) {
+            filteredProducts = filteredProducts.filter((p) =>
+              p.colors.some((color) => filters.color.has(color))
+            );
+          }
+
+          filteredProducts = filteredProducts.filter(
+            (p) => p.price <= filters.maxPrice
+          );
+
+          const sortValue = filters.sort;
+          if (sortValue === "price-asc") {
+            filteredProducts.sort((a, b) => a.price - b.price);
+          } else if (sortValue === "price-desc") {
+            filteredProducts.sort((a, b) => b.price - a.price);
+          } else if (sortValue === "name-asc") {
+            filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+          } else if (sortValue === "name-desc") {
+            filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+          }
+
+          renderProducts(filteredProducts);
+          updateURLWithFilters();
+        };
+
+        const updateURLWithFilters = () => {
+          const params = new URLSearchParams();
+
+          if (filters.searchQuery) params.set("search", filters.searchQuery);
+          if (filters.gender.size > 0)
+            params.set("gender", [...filters.gender].join(","));
+          if (filters.category.size > 0)
+            params.set("category", [...filters.category].join(","));
+          if (filters.brand.size > 0)
+            params.set("brand", [...filters.brand].join(","));
+          if (filters.gender.size > 0)
+            params.set("gender", [...filters.gender].join(","));
+          if (filters.color.size > 0)
+            params.set("color", [...filters.color].join(","));
+          if (parseInt(priceRange.value) < parseInt(priceRange.max))
+            params.set("price", filters.maxPrice);
+          if (filters.sort !== "default") params.set("sort", filters.sort);
+
+          const newUrl = `${window.location.pathname}?${params.toString()}`;
+          history.pushState(null, "", newUrl);
+        };
+
+        const readFiltersFromURL = () => {
+          const params = new URLSearchParams(window.location.search);
+          filters.searchQuery = params.get("search") || "";
+          filters.gender = new Set(params.get("gender")?.split(",") || []);
+          filters.category = new Set(params.get("category")?.split(",") || []);
+          filters.brand = new Set(params.get("brand")?.split(",") || []);
+          filters.gender = new Set(params.get("gender")?.split(",") || []);
+          filters.color = new Set(params.get("color")?.split(",") || []);
+          filters.maxPrice = Number(params.get("price")) || priceRange.max;
+          filters.sort = params.get("sort") || "default";
+        };
+
+        const updateUIFromFilters = () => {
+          searchInput.value = filters.searchQuery;
+          priceRange.value = filters.maxPrice;
+          priceValue.textContent = `$${filters.maxPrice}`;
+          sortOptions.value = filters.sort;
+
+          document
+            .querySelectorAll('input[type="checkbox"]')
+            .forEach((checkbox) => {
+              const type = checkbox.dataset.filterType;
+              checkbox.checked = filters[type]?.has(checkbox.value);
+            });
+
+          document.querySelectorAll(".color-swatch").forEach((swatch) => {
+            const type = swatch.dataset.filterType;
+            const value = swatch.dataset.value;
+            if (filters[type]?.has(value)) {
+              swatch.classList.add("selected");
+            } else {
+              swatch.classList.remove("selected");
+            }
+          });
+        };
+
+        // --- Event Listeners ---
+        const addEventListeners = () => {
+          searchInput.addEventListener("input", (e) => {
+            filters.searchQuery = e.target.value.toLowerCase();
+            applyFiltersAndSort();
+          });
+
+          genderFilters.addEventListener("change", handleCheckboxChange);
+          categoryFilters.addEventListener("change", handleCheckboxChange);
+          brandFilters.addEventListener("change", handleCheckboxChange);
+          genderFilters.addEventListener("change", handleCheckboxChange);
+          resetFiltersBtn.addEventListener("click", resetFilters);
+
+          colorFilters.addEventListener("click", (e) => {
+            if (e.target.classList.contains("color-swatch")) {
+              const swatch = e.target;
+              const { value, filterType } = swatch.dataset;
+              swatch.classList.toggle("selected");
+              if (swatch.classList.contains("selected")) {
+                filters[filterType].add(value);
+              } else {
+                filters[filterType].delete(value);
+              }
+              applyFiltersAndSort();
+            }
+          });
+
+          priceRange.addEventListener("input", (e) => {
+            filters.maxPrice = Number(e.target.value);
+            priceValue.textContent = `$${filters.maxPrice}`;
+            applyFiltersAndSort();
+          });
+
+          sortOptions.addEventListener("change", (e) => {
+            filters.sort = e.target.value;
+            applyFiltersAndSort();
+          });
+        };
+
+        const handleCheckboxChange = (e) => {
+          if (e.target.type === "checkbox") {
+            const { value, dataset, checked } = e.target;
+            const type = dataset.filterType;
+            if (checked) {
+              filters[type].add(value);
+            } else {
+              filters[type].delete(value);
+            }
+            applyFiltersAndSort();
+          }
+        };
+        const resetFilters = () => {
+          filters.searchQuery = "";
+          filters.category.clear();
+          filters.brand.clear();
+          filters.gender.clear();
+          filters.color.clear();
+          filters.maxPrice = priceRange.max;
+          filters.sort = "default";
+          window.location.href = "shop.html";
+
+          updateUIFromFilters();
+
+          applyFiltersAndSort();
+        };
+        initialize();
+      });
+    </script>
+  </body>
+</html>
